@@ -7,7 +7,7 @@
     "url": "https://github.com/Boosted-Chat/BoostedTravel",
     "source": "github"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "remotes": [
     {
       "type": "streamable-http",
@@ -26,6 +26,23 @@
     {
       "registryType": "npm",
       "identifier": "boostedtravel-mcp",
+      "version": "0.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "Your BoostedTravel API key",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true,
+          "name": "BOOSTEDTRAVEL_API_KEY"
+        }
+      ]
+    },
+    {
+      "registryType": "pypi",
+      "identifier": "boostedtravel",
       "version": "0.1.1",
       "transport": {
         "type": "stdio"
