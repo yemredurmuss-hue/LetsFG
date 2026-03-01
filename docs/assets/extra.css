@@ -1,0 +1,175 @@
+/* ── Hero section ── */
+.md-typeset .hero {
+  text-align: center;
+  padding: 2rem 0 1rem;
+}
+
+.md-typeset .hero h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.md-typeset .hero .hero-tagline {
+  font-size: 1.25rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.md-typeset .hero .hero-badges {
+  margin-bottom: 1.5rem;
+}
+
+.md-typeset .hero .hero-badges img {
+  margin: 0 0.25rem;
+}
+
+.md-typeset .hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.md-typeset .hero-buttons a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.md-typeset .hero-buttons .btn-primary {
+  background: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+}
+
+.md-typeset .hero-buttons .btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.md-typeset .hero-buttons .btn-secondary {
+  border: 2px solid var(--md-primary-fg-color);
+  color: var(--md-primary-fg-color);
+}
+
+.md-typeset .hero-buttons .btn-secondary:hover {
+  background: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  transform: translateY(-1px);
+}
+
+/* ── Feature cards ── */
+.md-typeset .feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+  margin: 2rem 0;
+}
+
+.md-typeset .feature-card {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.md-typeset .feature-card:hover {
+  border-color: var(--md-primary-fg-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .feature-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.md-typeset .feature-card .feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.md-typeset .feature-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.md-typeset .feature-card p {
+  margin: 0;
+  opacity: 0.75;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ── Install snippet ── */
+.md-typeset .install-box {
+  background: var(--md-code-bg-color);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-family: var(--md-code-font-family);
+  font-size: 0.9rem;
+  margin: 1rem auto;
+  max-width: 420px;
+  text-align: center;
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* ── Step flow ── */
+.md-typeset .steps {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.md-typeset .steps .step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  background: var(--md-code-bg-color);
+}
+
+.md-typeset .steps .step-arrow {
+  opacity: 0.4;
+  font-size: 1.3rem;
+}
+
+/* ── Pricing table cleanup ── */
+.md-typeset .pricing-table table {
+  width: 100%;
+}
+
+.md-typeset .pricing-table th,
+.md-typeset .pricing-table td {
+  text-align: left;
+}
+
+/* ── Smaller tweaks ── */
+.md-typeset .text-center {
+  text-align: center;
+}
+
+.md-typeset hr {
+  margin: 2.5rem 0;
+  border: none;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}

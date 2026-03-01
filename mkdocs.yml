@@ -1,4 +1,4 @@
-site_name: BoostedTravel Docs
+site_name: BoostedTravel
 site_url: https://docs.boostedchat.com
 site_description: Agent-native flight search & booking API. 400+ airlines, straight from the terminal.
 site_author: Boosted Chat
@@ -8,6 +8,7 @@ repo_url: https://github.com/Boosted-Chat/BoostedTravel
 
 theme:
   name: material
+  custom_dir: docs/overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -29,9 +30,10 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    - navigation.sections
-    - navigation.expand
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.top
+    - navigation.indexes
     - content.code.copy
     - content.code.annotate
     - search.highlight
@@ -40,16 +42,15 @@ theme:
   icon:
     repo: fontawesome/brands/github
   logo: assets/logo.svg
-  favicon: assets/favicon.png
+  favicon: assets/logo.svg
 
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - API Guide: api-guide.md
-  - AI Agent Guide: agent-guide.md
+  - Agent Guide: agent-guide.md
   - CLI Reference: cli-reference.md
   - Packages: packages.md
-  - API Reference (Swagger): https://api.boostedchat.com/docs
 
 extra:
   social:
@@ -60,6 +61,9 @@ extra:
     - icon: fontawesome/brands/npm
       link: https://www.npmjs.com/package/boostedtravel
   generator: false
+
+extra_css:
+  - assets/extra.css
 
 copyright: "&copy; 2026 Boosted Chat. MIT License."
 
@@ -75,8 +79,12 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - attr_list
   - md_in_html
+  - def_list
   - tables
   - toc:
       permalink: true

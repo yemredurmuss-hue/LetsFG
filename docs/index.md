@@ -1,47 +1,72 @@
 ---
 hide:
   - navigation
+  - toc
 ---
 
-# BoostedTravel
+<div class="hero" markdown>
 
-**Agent-native flight search & booking. 400+ airlines, straight from the terminal.**
+# :material-airplane: BoostedTravel
 
-No browser. No scraping. No token-burning automation. Built for AI agents and developers who need travel in their workflow.
+<p class="hero-tagline">Agent-native flight search & booking. 400+ airlines, straight from the terminal — no browser, no scraping.</p>
 
-<div class="grid cards" markdown>
+<div class="hero-badges">
 
--   :material-rocket-launch:{ .lg .middle } **Get Started in 5 Minutes**
+[![PyPI](https://img.shields.io/pypi/v/boostedtravel?style=flat-square)](https://pypi.org/project/boostedtravel/)
+[![npm](https://img.shields.io/npm/v/boostedtravel?style=flat-square)](https://www.npmjs.com/package/boostedtravel)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](https://github.com/Boosted-Chat/BoostedTravel/blob/main/LICENSE)
 
-    ---
+</div>
 
-    Install the CLI, grab your API key, and search your first flight.
+<div class="install-box">pip install boostedtravel</div>
 
-    [:octicons-arrow-right-24: Getting Started](getting-started.md)
+<div class="hero-buttons">
+<a href="getting-started.md" class="btn-primary">Get Started</a>
+<a href="api-guide.md" class="btn-secondary">API Guide</a>
+<a href="https://api.boostedchat.com/docs" class="btn-secondary">Swagger API</a>
+</div>
 
--   :material-api:{ .lg .middle } **API Guide**
+</div>
 
-    ---
+---
 
-    Error handling, search results, workflows, unlock mechanics, cost strategies.
+<div class="feature-grid" markdown>
 
-    [:octicons-arrow-right-24: API Guide](api-guide.md)
+<a class="feature-card" href="getting-started.md">
+<span class="feature-icon">:material-rocket-launch:</span>
+<h3>Getting Started</h3>
+<p>Register, set up auth & payment, and search your first flight in under 5 minutes.</p>
+</a>
 
--   :material-robot:{ .lg .middle } **AI Agent Guide**
+<a class="feature-card" href="api-guide.md">
+<span class="feature-icon">:material-api:</span>
+<h3>API Guide</h3>
+<p>Error handling, search results, resolution, workflows, unlock mechanics, costs.</p>
+</a>
 
-    ---
+<a class="feature-card" href="agent-guide.md">
+<span class="feature-icon">:material-robot:</span>
+<h3>AI Agent Guide</h3>
+<p>Architecture patterns, preference scoring, rate limits, price tracking & persistence.</p>
+</a>
 
-    Architecture patterns, preference scoring, rate limits, price tracking.
+<a class="feature-card" href="cli-reference.md">
+<span class="feature-icon">:material-console:</span>
+<h3>CLI Reference</h3>
+<p>Every command, flag, cabin code, and option for the boostedtravel CLI.</p>
+</a>
 
-    [:octicons-arrow-right-24: Agent Guide](agent-guide.md)
+<a class="feature-card" href="packages.md">
+<span class="feature-icon">:material-package-variant:</span>
+<h3>Packages</h3>
+<p>Python SDK, JavaScript SDK, MCP Server — all the ways to integrate.</p>
+</a>
 
--   :material-console:{ .lg .middle } **CLI Reference**
-
-    ---
-
-    Every command, flag, and option for the `boostedtravel` CLI.
-
-    [:octicons-arrow-right-24: CLI Reference](cli-reference.md)
+<a class="feature-card" href="https://api.boostedchat.com/docs">
+<span class="feature-icon">:material-file-document-outline:</span>
+<h3>OpenAPI Reference</h3>
+<p>Interactive Swagger docs — try every endpoint directly in your browser.</p>
+</a>
 
 </div>
 
@@ -51,22 +76,34 @@ No browser. No scraping. No token-burning automation. Built for AI agents and de
 
 Flight websites inflate prices with demand tracking, cookie-based pricing, and surge markup. The same flight is often **$20–$50 cheaper** through BoostedTravel — raw airline price, zero markup.
 
-| | Google Flights / Booking.com / Expedia | **BoostedTravel** |
+<div class="pricing-table" markdown>
+
+| | Google Flights / Booking / Expedia | **BoostedTravel** |
 |---|---|---|
 | Search | Free | **Free** |
-| View details & price | Free (with tracking/inflation) | **Free** (no tracking) |
+| View details & price | Free (with tracking / inflation) | **Free** (no tracking) |
 | Book | Ticket + hidden markup | **$1 unlock + ticket price** |
 | Price goes up on repeat search? | Yes | **Never** |
 
+</div>
+
+---
+
 ## How It Works
 
-```
-Search (free) → Unlock ($1) → Book (free)
-```
+<div class="steps">
+<span class="step">:material-magnify: Search <small>(free)</small></span>
+<span class="step-arrow">→</span>
+<span class="step">:material-lock-open: Unlock <small>($1)</small></span>
+<span class="step-arrow">→</span>
+<span class="step">:material-check-circle: Book <small>(free)</small></span>
+</div>
 
 1. **Search** — returns offers with price, airlines, duration, stopovers, conditions. Completely free, unlimited.
 2. **Unlock** — confirms live price with the airline, reserves for 30 minutes. $1 flat fee.
 3. **Book** — creates real airline PNR. E-ticket sent to passenger email. Free after unlock.
+
+---
 
 ## Quick Start
 
@@ -74,7 +111,6 @@ Search (free) → Unlock ($1) → Book (free)
 
     ```bash
     pip install boostedtravel
-
     boostedtravel register --name my-agent --email you@example.com
     export BOOSTEDTRAVEL_API_KEY=trav_...
 
@@ -92,7 +128,6 @@ Search (free) → Unlock ($1) → Book (free)
 
     bt = BoostedTravel(api_key="trav_...")
     flights = bt.search("LHR", "JFK", "2026-04-15")
-    print(f"{flights.total_results} offers, cheapest: {flights.cheapest.summary()}")
 
     unlocked = bt.unlock(flights.offers[0].id)
     booking = bt.book(
@@ -104,7 +139,7 @@ Search (free) → Unlock ($1) → Book (free)
     print(f"Booked! PNR: {booking.booking_reference}")
     ```
 
-=== "JavaScript SDK"
+=== "JavaScript"
 
     ```typescript
     import { BoostedTravel } from 'boostedtravel';
@@ -114,7 +149,7 @@ Search (free) → Unlock ($1) → Book (free)
     console.log(`${flights.totalResults} offers`);
     ```
 
-=== "MCP Server"
+=== "MCP (Claude/Cursor)"
 
     ```json
     {
@@ -122,26 +157,16 @@ Search (free) → Unlock ($1) → Book (free)
         "boostedtravel": {
           "command": "npx",
           "args": ["-y", "boostedtravel-mcp"],
-          "env": {
-            "BOOSTEDTRAVEL_API_KEY": "trav_your_api_key"
-          }
+          "env": { "BOOSTEDTRAVEL_API_KEY": "trav_..." }
         }
       }
     }
     ```
 
-## Packages
+---
 
-| Package | Install | Description |
-|---------|---------|-------------|
-| **Python SDK + CLI** | `pip install boostedtravel` | SDK + `boostedtravel` CLI |
-| **JS/TS SDK + CLI** | `npm install -g boostedtravel` | SDK + `boostedtravel` CLI |
-| **MCP Server** | `npx boostedtravel-mcp` | Model Context Protocol for Claude, Cursor, Windsurf |
+<div class="text-center" markdown>
 
-## Links
+**Ready to build?** [Get your API key :material-arrow-right:](getting-started.md){ .md-button .md-button--primary }
 
-- [PyPI](https://pypi.org/project/boostedtravel/)
-- [npm (JS SDK)](https://www.npmjs.com/package/boostedtravel)
-- [npm (MCP Server)](https://www.npmjs.com/package/boostedtravel-mcp)
-- [OpenAPI / Swagger](https://api.boostedchat.com/docs)
-- [GitHub](https://github.com/Boosted-Chat/BoostedTravel)
+</div>
