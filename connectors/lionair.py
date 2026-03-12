@@ -9,7 +9,7 @@ Strategy (hybrid — direct API first, browser fallback):
 1. (Primary) curl_cffi POST to GoQuo search/availability endpoint (~1-3s).
    If direct API returns 403/challenge, use cookie-farm: Playwright generates
    Cloudflare cookies, curl_cffi reuses them for subsequent API calls.
-   Cookies refreshed every 20-25 minutes.
+   Cookies refreshed every ~20 minutes.
 2. (Fallback) Playwright CDP Chrome — navigate to lionair.co.id/en homepage,
    fill search form, intercept GoQuo API responses, parse JSON.
 
@@ -431,8 +431,10 @@ class LionAirConnectorClient:
 
             # Also update cookie farm from this successful browser session
             global _farmed_cookies, _farm_timestamp
-            _farmed_cookies = await context.cookies()
-            _farm_timestamp = time.monotonic()
+            lock = _get_farm_lock()
+            async with lock:
+                _farmed_cookies = await context.cookies()
+                _farm_timestamp = time.monotonic()
 
             data = captured_data.get("json", {})
             if not data:
