@@ -87,7 +87,8 @@ async def _get_browser():
             return _browser
         from playwright.async_api import async_playwright
 
-        chrome_path = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+        from connectors.browser import find_chrome, stealth_args, stealth_popen_kwargs
+        chrome_path = find_chrome()
         user_data = os.path.join(os.environ.get("TEMP", "/tmp"), "chrome-cdp-jetsmart")
         _chrome_proc = subprocess.Popen([
             chrome_path,
@@ -96,7 +97,8 @@ async def _get_browser():
             "--no-first-run",
             "--no-default-browser-check",
             "--disable-blink-features=AutomationControlled",
-        ])
+            *stealth_args(),
+        ], **stealth_popen_kwargs())
         await asyncio.sleep(1.5)
 
         pw = await async_playwright().start()

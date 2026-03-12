@@ -34,6 +34,7 @@ from models.flights import (
     FlightSearchResponse,
     FlightSegment,
 )
+from connectors.browser import stealth_args, stealth_popen_kwargs
 
 logger = logging.getLogger(__name__)
 
@@ -87,13 +88,12 @@ async def _launch_chrome() -> subprocess.Popen:
         "--disable-translate",
         "--disable-extensions",
         "--window-size=1440,900",
+        *stealth_args(),
         "about:blank",
     ]
     proc = subprocess.Popen(
         args,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        **stealth_popen_kwargs(),
     )
     await asyncio.sleep(2)
     return proc

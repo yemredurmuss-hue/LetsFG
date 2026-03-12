@@ -37,6 +37,7 @@ from models.flights import (
     FlightSearchResponse,
     FlightSegment,
 )
+from connectors.browser import stealth_args, stealth_popen_kwargs
 
 logger = logging.getLogger(__name__)
 
@@ -103,10 +104,10 @@ async def _launch_chrome() -> subprocess.Popen:
             "--disable-background-timer-throttling",
             "--disable-backgrounding-occluded-windows",
             "--disable-renderer-backgrounding",
+            *stealth_args(),
             "about:blank",
         ],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        **stealth_popen_kwargs(),
     )
     await asyncio.sleep(3)
     logger.info("Azul: Chrome launched on CDP port %d", _CDP_PORT)

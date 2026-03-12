@@ -35,6 +35,7 @@ from models.flights import (
     FlightSearchResponse,
     FlightSegment,
 )
+from connectors.browser import stealth_args, stealth_popen_kwargs
 
 logger = logging.getLogger(__name__)
 
@@ -93,9 +94,9 @@ def _launch_chrome():
             "--disable-background-timer-throttling",
             "--disable-backgrounding-occluded-windows",
             "--disable-renderer-backgrounding",
+            *stealth_args(),
         ],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        **stealth_popen_kwargs(),
     )
     logger.info("Eurowings: Chrome launched on CDP port %d (pid=%d)", _CDP_PORT, _chrome_proc.pid)
 

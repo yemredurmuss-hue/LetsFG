@@ -42,6 +42,7 @@ from models.flights import (
     FlightSearchResponse,
     FlightSegment,
 )
+from connectors.browser import stealth_args
 
 logger = logging.getLogger(__name__)
 
@@ -165,12 +166,12 @@ async def _get_browser(proxy: dict):
             _browser = await _pw_instance.chromium.launch(
                 headless=False,
                 channel="chrome",
-                args=["--disable-blink-features=AutomationControlled"],
+                args=["--disable-blink-features=AutomationControlled", *stealth_args()],
             )
         except Exception:
             _browser = await _pw_instance.chromium.launch(
                 headless=False,
-                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+                args=["--disable-blink-features=AutomationControlled", "--no-sandbox", *stealth_args()],
             )
         logger.info("Allegiant: headed Chrome launched")
         return _browser

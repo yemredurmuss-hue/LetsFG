@@ -37,6 +37,7 @@ from models.flights import (
     FlightSearchResponse,
     FlightSegment,
 )
+from connectors.browser import stealth_args, stealth_position_arg, stealth_popen_kwargs
 
 logger = logging.getLogger(__name__)
 
@@ -149,10 +150,10 @@ async def _get_browser():
                     "--no-first-run",
                     "--no-default-browser-check",
                     "--disable-background-networking",
+                    *stealth_position_arg(),
                     "about:blank",
                 ],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
+                **stealth_popen_kwargs(),
             )
             await asyncio.sleep(2.5)
             try:
@@ -172,12 +173,12 @@ async def _get_browser():
             _browser = await _pw_instance.chromium.launch(
                 headless=False,
                 channel="chrome",
-                args=["--disable-blink-features=AutomationControlled"],
+                args=["--disable-blink-features=AutomationControlled", *stealth_args()],
             )
         except Exception:
             _browser = await _pw_instance.chromium.launch(
                 headless=False,
-                args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+                args=["--disable-blink-features=AutomationControlled", "--no-sandbox", *stealth_args()],
             )
         logger.info("easyJet: Playwright browser launched (headed fallback)")
         return _browser
