@@ -101,7 +101,7 @@
 | 32 | kiwi | — | `done` | copilot-eurowings-fix | 2026-03-14T02:45Z | Validated working — GraphQL API, 50 offers STN→BCN 88 GBP, SDK in sync |
 | 33 | play | OG | `blocked` | copilot-eurowings-fix | 2026-03-14T02:50Z | flyplay.com DNS offline — airline website shut down, connector returns empty |
 | 34 | spicejet | SG | `done` | copilot-eurowings-fix | 2026-03-14T04:00Z | Carrier prefix fix + SDK sync, 4 offers DEL→BOM 5767 INR |
-| 35 | twayair | TW | [#29](https://github.com/Boosted-Chat/BoostedTravel/issues/29) | `claimed` | copilot-batikair-fix | 2026-03-14T04:00Z | Akamai blocks nodriver headless — needs headed CDP Chrome fix |
+| 35 | twayair | TW | [#29](https://github.com/Boosted-Chat/BoostedTravel/issues/29) | `done` | copilot-batikair-fix | 2026-03-14T04:00Z | Headed CDP Chrome for Akamai bypass; removed nodriver tier; default context cookie persistence; 1 offer GMP→CJU 50600 KRW, 1 offer ICN→NRT 17357 JPY |
 | 36 | vietjet | VJ | `done` | copilot-batikair-fix | 2026-03-14T04:00Z | Validated working — direct API, 25 offers SGN→HAN |
 | 37 | vivaaerobus | VB | `done` | copilot-batikair-fix | 2026-03-14T04:00Z | Validated working — 7 offers MEX→CUN 1082.95 MXN |
 | 38 | vueling | VY | `done` | copilot-batikair-fix | 2026-03-14T04:00Z | Validated working — 6 offers BCN→FCO 45.90 EUR |
