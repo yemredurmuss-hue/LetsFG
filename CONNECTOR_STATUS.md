@@ -111,7 +111,7 @@
 
 | # | Connector | IATA | Type | Status | Reason |
 |---|-----------|------|------|--------|--------|
-| 40 | jetblue | B6 | LCC | `broken` | **US IP required.** 114 destinations, dominates Northeast + Caribbean + transatlantic budget. jetblue.com SPA. |
+| 40 | jetblue | B6 | LCC | `done` | bestFares calendar API (no auth, ~2s), Playwright fallback for details. 114+ destinations. |
 | 41 | breeze | MX | LCC | `broken` | **US IP required.** 75 destinations, unique unserved city pairs (A220 fleet). flybreeze.com. |
 | 42 | avelo | XP | ULCC | `broken` | **US IP required.** Ultra-low fares $19-59, serves small airports (New Haven, Wilmington DE). aveloair.com. |
 | 43 | suncountry | SY | ULCC | `broken` | **US IP required.** 81+ destinations from MSP hub, best low-cost carrier NA. suncountry.com. |

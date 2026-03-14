@@ -58,6 +58,7 @@ from connectors.azul import AzulConnectorClient
 from connectors.flysafair import FlySafairConnectorClient
 from connectors.vivaaerobus import VivaAerobusConnectorClient
 from connectors.allegiant import AllegiantConnectorClient
+from connectors.jetblue import JetBlueConnectorClient
 from connectors.flair import FlairConnectorClient
 from connectors.spicejet import SpiceJetConnectorClient
 from connectors.akasa import AkasaConnectorClient
@@ -92,6 +93,7 @@ _BROWSER_SOURCES: set[str] = {
     "flybondi_direct", "flydubai_direct", "flynas_direct", "frontier_direct",
     "gol_direct", "indigo_direct", "jet2_direct", "jetsmart_direct",
     "jetstar_direct", "luckyair_direct", "9air_direct",
+    "jetblue_direct",
     "norwegian_direct", "peach_direct", "pegasus_direct", "play_direct",
     "porter_direct", "scoot_direct", "smartwings_direct", "southwest_direct",
     "spirit_direct", "sunexpress_direct", "transavia_direct", "twayair_direct",
@@ -127,8 +129,7 @@ _DIRECT_AIRLINE_connectorS: list[tuple[str, type, float]] = [
     ("azul_direct", AzulConnectorClient, 25.0),
     ("flysafair_direct", FlySafairConnectorClient, 25.0),
     ("vivaaerobus_direct", VivaAerobusConnectorClient, 25.0),
-    ("allegiant_direct", AllegiantConnectorClient, 25.0),
-    ("flair_direct", FlairConnectorClient, 25.0),
+    ("allegiant_direct", AllegiantConnectorClient, 25.0),    ("jetblue_direct", JetBlueConnectorClient, 25.0),    ("flair_direct", FlairConnectorClient, 25.0),
     ("spicejet_direct", SpiceJetConnectorClient, 25.0),
     ("akasa_direct", AkasaConnectorClient, 25.0),
     ("spring_direct", SpringConnectorClient, 25.0),
