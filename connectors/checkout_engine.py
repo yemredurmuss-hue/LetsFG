@@ -76,6 +76,10 @@ class AirlineCheckoutConfig:
     use_proxy: bool = False            # Enable residential proxy for this airline
     use_chrome_channel: bool = False   # Use installed Chrome instead of Playwright Chromium
 
+    # CDP Chrome mode (Kasada bypass — launch real Chrome as subprocess, connect via CDP)
+    use_cdp_chrome: bool = False       # Launch real Chrome + CDP instead of Playwright
+    cdp_port: int = 9448               # CDP debugging port (unique per airline)
+
     # Anti-bot
     service_workers: str = ""          # "block" | "" — block SW for cleaner interception
     disable_cache: bool = False        # CDP Network.setCacheDisabled
@@ -363,8 +367,8 @@ _register(_base_cfg("Ryanair", "ryanair_direct",
 
 _register(_base_cfg("Wizz Air", "wizzair_api",
     goto_timeout=60000,
-    use_proxy=True,
-    use_chrome_channel=True,
+    use_cdp_chrome=True,
+    cdp_port=9448,
     homepage_url="https://wizzair.com/en-gb",
     homepage_wait_ms=5000,
     clear_storage_keep=["kpsdk", "_kas"],
@@ -1366,29 +1370,75 @@ class GenericCheckoutEngine:
         import subprocess as _sp
 
         pw = await async_playwright().start()
-        launch_args = [
-            "--disable-blink-features=AutomationControlled",
-            "--window-position=-2400,-2400",
-            "--window-size=1440,900",
-        ]
+        _chrome_proc = None  # CDP Chrome subprocess (if any)
 
-        # Proxy support (Decodo / residential proxy for anti-bot bypass)
-        launch_kwargs: dict = {"headless": headless, "args": launch_args}
-        if config.use_chrome_channel:
-            launch_kwargs["channel"] = "chrome"
-        if config.use_proxy:
-            proxy_server = os.environ.get("DECODO_PROXY_SERVER", "")
-            proxy_user = os.environ.get("DECODO_PROXY_USER", "")
-            proxy_pass = os.environ.get("DECODO_PROXY_PASS", "")
-            if proxy_server:
-                launch_kwargs["proxy"] = {
-                    "server": proxy_server,
-                    "username": proxy_user,
-                    "password": proxy_pass,
-                }
-                logger.info("%s checkout: using proxy %s", config.airline_name, proxy_server)
+        if config.use_cdp_chrome:
+            # CDP mode: launch real Chrome as subprocess, connect via CDP.
+            # This bypasses Kasada KPSDK — Playwright automation hooks are NOT
+            # injected into the Chrome binary, so KPSDK JS runs naturally.
+            from .browser import find_chrome, stealth_popen_kwargs
+            chrome_path = find_chrome()
+            _user_data_dir = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                f".{config.source_tag}_chrome_data",
+            )
+            os.makedirs(_user_data_dir, exist_ok=True)
+            vp = random.choice([(1366, 768), (1440, 900), (1920, 1080)])
+            cdp_args = [
+                chrome_path,
+                f"--remote-debugging-port={config.cdp_port}",
+                f"--user-data-dir={_user_data_dir}",
+                f"--window-size={vp[0]},{vp[1]}",
+                "--no-first-run",
+                "--no-default-browser-check",
+                "--disable-blink-features=AutomationControlled",
+                "--disable-background-networking",
+                "--window-position=-2400,-2400",
+                "about:blank",
+            ]
+            logger.info("%s checkout: launching CDP Chrome on port %d", config.airline_name, config.cdp_port)
+            _chrome_proc = _sp.Popen(cdp_args, **stealth_popen_kwargs())
+            import asyncio as _aio
+            await _aio.sleep(3.0)  # give Chrome time to start CDP server
+            try:
+                browser = await pw.chromium.connect_over_cdp(
+                    f"http://127.0.0.1:{config.cdp_port}"
+                )
+            except Exception as cdp_err:
+                logger.warning("%s checkout: CDP connect failed: %s", config.airline_name, cdp_err)
+                _chrome_proc.terminate()
+                _chrome_proc = None
+                await pw.stop()
+                return CheckoutProgress(
+                    status="failed", airline=config.airline_name, source=config.source_tag,
+                    offer_id=offer_id, booking_url=booking_url,
+                    message=f"CDP Chrome launch failed: {cdp_err}",
+                    elapsed_seconds=time.monotonic() - t0,
+                )
+        else:
+            launch_args = [
+                "--disable-blink-features=AutomationControlled",
+                "--window-position=-2400,-2400",
+                "--window-size=1440,900",
+            ]
 
-        browser = await pw.chromium.launch(**launch_kwargs)
+            # Proxy support (Decodo / residential proxy for anti-bot bypass)
+            launch_kwargs: dict = {"headless": headless, "args": launch_args}
+            if config.use_chrome_channel:
+                launch_kwargs["channel"] = "chrome"
+            if config.use_proxy:
+                proxy_server = os.environ.get("DECODO_PROXY_SERVER", "")
+                proxy_user = os.environ.get("DECODO_PROXY_USER", "")
+                proxy_pass = os.environ.get("DECODO_PROXY_PASS", "")
+                if proxy_server:
+                    launch_kwargs["proxy"] = {
+                        "server": proxy_server,
+                        "username": proxy_user,
+                        "password": proxy_pass,
+                    }
+                    logger.info("%s checkout: using proxy %s", config.airline_name, proxy_server)
+
+            browser = await pw.chromium.launch(**launch_kwargs)
 
         # Track browser PID for guaranteed cleanup on cancellation
         _browser_pid = None
@@ -1396,10 +1446,22 @@ class GenericCheckoutEngine:
             _browser_pid = browser._impl_obj._browser_process.pid
         except Exception:
             pass
+        if _chrome_proc:
+            _browser_pid = _chrome_proc.pid
 
         def _force_kill_browser():
             """Synchronous kill — works even when asyncio is cancelled."""
-            if _browser_pid:
+            if _chrome_proc:
+                try:
+                    _chrome_proc.terminate()
+                    _chrome_proc.wait(timeout=5)
+                except Exception:
+                    try:
+                        _sp.run(["taskkill", "/F", "/T", "/PID", str(_chrome_proc.pid)],
+                                capture_output=True, timeout=5)
+                    except Exception:
+                        pass
+            elif _browser_pid:
                 try:
                     _sp.run(["taskkill", "/F", "/T", "/PID", str(_browser_pid)],
                             capture_output=True, timeout=5)
@@ -1417,16 +1479,23 @@ class GenericCheckoutEngine:
         if config.service_workers:
             ctx_kwargs["service_workers"] = config.service_workers
 
-        context = await browser.new_context(**ctx_kwargs)
+        if config.use_cdp_chrome and hasattr(browser, "contexts") and browser.contexts:
+            # CDP mode: reuse the existing context from the connected Chrome
+            context = browser.contexts[0]
+        else:
+            context = await browser.new_context(**ctx_kwargs)
 
         try:
-            # Stealth
-            try:
-                from playwright_stealth import stealth_async
+            # Stealth (skip for CDP Chrome — it's already a real browser)
+            if config.use_cdp_chrome:
                 page = await context.new_page()
-                await stealth_async(page)
-            except ImportError:
-                page = await context.new_page()
+            else:
+                try:
+                    from playwright_stealth import stealth_async
+                    page = await context.new_page()
+                    await stealth_async(page)
+                except ImportError:
+                    page = await context.new_page()
 
             # CDP cache disable
             if config.disable_cache:
