@@ -10,12 +10,12 @@ and implement `start_checkout()`.  This base class handles:
   - Dry-run safety (never submits payment)
 
 The unlock token MUST be obtained from the backend before checkout begins.
-This ensures the $1 fee is paid and prevents open-source workarounds:
+This ensures proper verification and prevents unauthorized workarounds:
 the signing key lives only on the closed-source backend.
 
 Flow:
   1. Agent searches (free) → gets offers with booking_url
-  2. Agent calls bt.unlock(offer_id) → $1 charged → gets unlock token
+  2. Agent calls bt.unlock(offer_id) → gets unlock token
   3. Agent calls bt.start_checkout(offer_id, passengers, unlock_token)
      → connector drives the airline checkout up to the payment page
   4. Returns CheckoutProgress with status, screenshot, and booking_url
@@ -139,7 +139,7 @@ def verify_checkout_token(
       - Token signature is valid (HMAC-SHA256, server-side secret)
       - Token belongs to this offer_id
       - Token hasn't expired (30 min window from unlock)
-      - $1 fee was successfully charged
+      - Unlock was successfully processed
 
     Returns: {"valid": True, "offer_id": "...", "expires_at": "..."}
     Raises on failure.
@@ -307,7 +307,7 @@ class BookableConnector:
         Args:
             offer: The FlightOffer dict (must include id, booking_url, price, currency, outbound).
             passengers: Passenger details (use FAKE_PASSENGER for testing).
-            checkout_token: Token from bt.unlock() — proves $1 was paid.
+            checkout_token: Token from bt.unlock() — proves offer was unlocked.
             api_key: LetsFG API key for token verification.
             base_url: Override API base URL.
 
@@ -337,7 +337,7 @@ class BookableConnector:
                     airline=self.AIRLINE_NAME,
                     source=self.SOURCE_TAG,
                     offer_id=offer_id,
-                    message="Checkout token is invalid or expired. Call unlock() first ($1 fee).",
+                    message="Checkout token is invalid or expired. Call unlock() first.",
                     booking_url=booking_url,
                 )
         except Exception as e:

@@ -706,7 +706,7 @@ class EasyjetBookableConnector:
                 return CheckoutProgress(
                     status="failed", airline=self.AIRLINE_NAME, source=self.SOURCE_TAG,
                     offer_id=offer_id, booking_url=booking_url,
-                    message="Checkout token invalid or expired. Call unlock() first ($1 fee).",
+                    message="Checkout token invalid or expired. Call unlock() first.",
                 )
         except Exception as e:
             return CheckoutProgress(

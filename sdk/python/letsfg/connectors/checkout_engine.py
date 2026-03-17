@@ -1350,7 +1350,7 @@ class GenericCheckoutEngine:
                 return CheckoutProgress(
                     status="failed", airline=config.airline_name, source=config.source_tag,
                     offer_id=offer_id, booking_url=booking_url,
-                    message="Checkout token invalid or expired. Call unlock() first ($1 fee).",
+                    message="Checkout token invalid or expired. Call unlock() first.",
                 )
         except Exception as e:
             return CheckoutProgress(
