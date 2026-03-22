@@ -20,12 +20,12 @@ import time
 from datetime import datetime
 from typing import Optional
 
-from connectors.iberia import (
+from .iberia import (
     _get_cached_fares,
     _ORIGIN_TO_MARKET,
     _AIRPORT_TO_CITY,
 )
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,

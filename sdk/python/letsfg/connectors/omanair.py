@@ -20,7 +20,7 @@ from datetime import date, datetime, timedelta
 
 import httpx
 
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,

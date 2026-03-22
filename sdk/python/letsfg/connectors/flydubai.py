@@ -33,14 +33,14 @@ import time
 from datetime import datetime
 from typing import Any, Optional
 
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,
     FlightSearchResponse,
     FlightSegment,
 )
-from connectors.browser import stealth_args
+from .browser import stealth_args
 
 logger = logging.getLogger(__name__)
 

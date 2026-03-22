@@ -42,14 +42,14 @@ import time
 from datetime import datetime
 from typing import Optional
 
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,
     FlightSearchResponse,
     FlightSegment,
 )
-from connectors.browser import (
+from .browser import (
     _launched_pw_instances,
     acquire_browser_slot,
     release_browser_slot,

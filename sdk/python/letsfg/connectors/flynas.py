@@ -37,7 +37,7 @@ try:
 except ImportError:
     HAS_CURL = False
 
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,

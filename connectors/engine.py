@@ -169,6 +169,12 @@ from connectors.royaljordanian import RoyalJordanianConnectorClient
 from connectors.kuwaitairways import KuwaitAirwaysConnectorClient
 from connectors.level import LevelConnectorClient
 from connectors.iwantthatflight import IWantThatFlightConnectorClient
+from connectors.linkairways import LinkAirwaysConnectorClient
+from connectors.transnusa import TransNusaConnectorClient
+from connectors.superairjet import SuperAirJetConnectorClient
+from connectors.qatar import QatarConnectorClient
+from connectors.citilink import CitilinkConnectorClient
+from connectors.samoaairways import SamoaAirwaysConnectorClient
 
 from models.flights import AirlineSummary, FlightOffer, FlightSearchRequest, FlightSearchResponse
 
@@ -216,6 +222,8 @@ _BROWSER_SOURCES: set[str] = {
     "airserbia_direct", "aireuropa_direct", "mea_direct",
     "hainan_direct", "royaljordanian_direct", "kuwaitairways_direct",
     "level_direct",
+    "linkairways_direct", "transnusa_direct", "superairjet_direct",
+    "qatar_direct", "citilink_direct", "samoaairways_direct",
 }
 
 
@@ -407,6 +415,13 @@ _DIRECT_AIRLINE_connectorS: list[tuple[str, type, float]] = [
     ("royaljordanian_direct", RoyalJordanianConnectorClient, 55.0),
     ("kuwaitairways_direct", KuwaitAirwaysConnectorClient, 55.0),
     ("level_direct", LevelConnectorClient, 55.0),
+    # ── Oceania/SE Asia/Middle East batch (CDP Chrome + form fill) ──
+    ("linkairways_direct", LinkAirwaysConnectorClient, 45.0),
+    ("transnusa_direct", TransNusaConnectorClient, 50.0),
+    ("superairjet_direct", SuperAirJetConnectorClient, 50.0),
+    ("qatar_direct", QatarConnectorClient, 55.0),
+    ("citilink_direct", CitilinkConnectorClient, 50.0),
+    ("samoaairways_direct", SamoaAirwaysConnectorClient, 45.0),
 ]
 
 

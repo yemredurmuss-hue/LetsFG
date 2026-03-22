@@ -9,8 +9,8 @@ from datetime import date, datetime, time as dt_time
 from typing import Optional
 from urllib.parse import urlencode
 
-from connectors.browser import _launched_pw_instances, acquire_browser_slot, release_browser_slot
-from models.flights import (
+from .browser import _launched_pw_instances, acquire_browser_slot, release_browser_slot
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,

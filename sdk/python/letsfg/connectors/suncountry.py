@@ -29,7 +29,7 @@ import time
 from datetime import datetime, timedelta
 from typing import Optional
 
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,

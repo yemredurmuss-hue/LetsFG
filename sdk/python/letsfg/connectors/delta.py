@@ -44,7 +44,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any, Optional
 
-from models.flights import (
+from ..models.flights import (
     AirlineSummary,
     FlightOffer,
     FlightRoute,

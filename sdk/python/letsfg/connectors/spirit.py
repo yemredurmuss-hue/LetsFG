@@ -30,14 +30,14 @@ import time
 from datetime import datetime
 from typing import Any, Optional
 
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,
     FlightSearchResponse,
     FlightSegment,
 )
-from connectors.browser import find_chrome, stealth_popen_kwargs
+from .browser import find_chrome, stealth_popen_kwargs
 
 logger = logging.getLogger(__name__)
 

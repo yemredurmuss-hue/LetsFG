@@ -129,6 +129,15 @@ _MAC_CANDIDATES = [
 ]
 
 
+def is_browser_available() -> bool:
+    """Return True if a usable Chrome binary exists on this machine."""
+    try:
+        find_chrome()
+        return True
+    except RuntimeError:
+        return False
+
+
 def find_chrome() -> str:
     """Find Chrome executable on the system. Raises RuntimeError if not found."""
     env = os.environ.get("CHROME_PATH", "")

@@ -19,7 +19,7 @@ from datetime import date, datetime, time as dt_time
 
 from curl_cffi import requests as creq
 
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
     FlightSearchRequest,

@@ -729,6 +729,12 @@ AIRLINE_COUNTRIES: dict[str, set[str]] = {
     },
     # ── Airnorth (.NET B2C — northern Australia + Dili) ──
     "airnorth": {"AU", "TL"},
+    # ── Air Niugini (EveryMundo __NEXT_DATA__ — PNG flag carrier) ──
+    "airniugini": {
+        "PG", "AU", "SG", "HK", "JP", "PH", "FJ", "SB", "MY",
+    },
+    # ── Link Airways (Playwright ASP.NET — Australian regional) ──
+    "linkairways": {"AU"},
     # ── I Want That Flight (AU aggregator — domestic + international from AU) ──
     "iwantthatflight": {
         "AU", "NZ", "FJ", "NC", "PF", "PG", "VU", "WS", "TO",

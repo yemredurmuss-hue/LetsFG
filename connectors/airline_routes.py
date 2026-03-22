@@ -849,6 +849,25 @@ AIRLINE_COUNTRIES: dict[str, set[str]] = {
         "US",
         "AR", "CL", "BR",
     },
+    "linkairways": {"AU"},
+    "transnusa": {"ID", "AU", "MY", "CN", "SG"},
+    "superairjet": {"ID"},
+    "qatar": {
+        "QA", "AE", "SA", "KW", "BH", "OM", "JO", "LB", "IQ", "IR",
+        "GB", "FR", "DE", "IT", "ES", "NL", "BE", "CH", "AT", "SE",
+        "NO", "DK", "GR", "TR", "PL", "CZ", "IE", "PT", "HU", "RO",
+        "BG", "HR", "RS", "BA", "CY",
+        "US", "CA",
+        "IN", "PK", "BD", "LK", "NP",
+        "TH", "SG", "MY", "ID", "PH", "VN", "KH", "MM",
+        "CN", "JP", "KR", "TW", "HK",
+        "AU", "NZ",
+        "EG", "MA", "TN", "DZ", "NG", "KE", "TZ", "ET", "ZA", "GH", "SN",
+        "BR", "AR",
+        "MV",
+    },
+    "citilink": {"ID", "MY", "SG", "TH", "SA"},
+    "samoaairways": {"WS", "AS"},
 }
 
 

@@ -13,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import logging
 
-from models.flights import (
+from ..models.flights import (
     FlightOffer,
     FlightRoute,
 )
