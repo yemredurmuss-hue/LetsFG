@@ -135,13 +135,24 @@ def _resolve_slug(iata: str) -> str | None:
     return _slug_cache.get(iata)
 
 
-def _build_booking_url(origin: str, destination: str) -> str:
-    """Build a working Virgin Atlantic booking URL using the airTRFX route page."""
-    o_slug = _resolve_slug(origin)
-    d_slug = _resolve_slug(destination)
-    if o_slug and d_slug:
-        return f"https://flights.virginatlantic.com/en-gb/flights-from-{o_slug}-to-{d_slug}"
-    return f"https://www.virginatlantic.com/flights?origin={origin}&destination={destination}"
+def _build_booking_url(origin: str, destination: str, date_from=None, date_to=None) -> str:
+    """Build a Google Flights deep-link for Virgin Atlantic.
+
+    VA's own site (flights.virginatlantic.com) ignores query params — dates/trip
+    type cannot be pre-filled.  Google Flights accepts all params and shows
+    the correct VA flight results.
+    """
+    from urllib.parse import quote_plus
+    dep = ""
+    if date_from:
+        dep_str = date_from.strftime("%b %d") if hasattr(date_from, "strftime") else str(date_from)[:10]
+        dep = f" {dep_str}"
+    if date_to:
+        ret_str = date_to.strftime("%b %d") if hasattr(date_to, "strftime") else str(date_to)[:10]
+        q = f"Virgin Atlantic {origin} to {destination}{dep} return {ret_str}"
+    else:
+        q = f"Virgin Atlantic {origin} to {destination}{dep} one way"
+    return f"https://www.google.com/travel/flights?q={quote_plus(q)}"
 
 
 class VirginAtlanticConnectorClient:
@@ -211,8 +222,8 @@ class VirginAtlanticConnectorClient:
         except (ValueError, TypeError):
             dt = date.today() + timedelta(days=30)
 
-        start = dt - timedelta(days=3)
-        end = dt + timedelta(days=30)
+        start = dt
+        end = dt
 
         payload = {
             "markets": ["GB", "US", "IE"],
@@ -253,6 +264,7 @@ class VirginAtlanticConnectorClient:
         from .airline_routes import city_match_set
         origin_set = city_match_set(req.origin)
         dest_set = city_match_set(req.destination)
+        target_date = req.date_from.strftime("%Y-%m-%d") if hasattr(req.date_from, "strftime") else str(req.date_from)[:10]
 
         offers = []
         for route in data:
@@ -261,6 +273,11 @@ class VirginAtlanticConnectorClient:
                 dest = (fare.get("destinationAirportCode") or route.get("destination") or "").upper()
                 # Filter by correct route - BOTH origin AND destination must match
                 if orig not in origin_set or dest not in dest_set:
+                    continue
+
+                # Filter by correct date
+                dep_str = (fare.get("departureDate") or "")[:10]
+                if dep_str != target_date:
                     continue
 
                 price = fare.get("totalPrice") or fare.get("usdTotalPrice")
@@ -324,7 +341,7 @@ class VirginAtlanticConnectorClient:
                     inbound=inbound,
                     airlines=["Virgin Atlantic"],
                     owner_airline="VS",
-                    booking_url=_build_booking_url(req.origin, req.destination),
+                    booking_url=_build_booking_url(req.origin, req.destination, req.date_from, req.return_from),
                     is_locked=False,
                     source="virginatlantic_direct",
                     source_tier="free",
@@ -357,8 +374,8 @@ class VirginAtlanticConnectorClient:
             "origins": [req.origin],
             "destinations": [req.destination],
             "departureDaysInterval": {
-                "min": max(0, days_from_now - 1),
-                "max": days_from_now + 3,
+                "min": days_from_now,
+                "max": days_from_now,
             },
             "journeyType": "ONE_WAY",
         }
@@ -409,6 +426,11 @@ class VirginAtlanticConnectorClient:
         if not dep_date_str:
             return None
 
+        # Reject fares that don't match the requested date
+        target_date = req.date_from.strftime("%Y-%m-%d") if hasattr(req.date_from, "strftime") else str(req.date_from)[:10]
+        if dep_date_str != target_date:
+            return None
+
         origin_code = ob.get("departureAirportIataCode") or req.origin
         dest_code = ob.get("arrivalAirportIataCode") or req.destination
         cabin_input = ob.get("fareClassInput") or ob.get("fareClass") or "Economy"
@@ -448,7 +470,7 @@ class VirginAtlanticConnectorClient:
             inbound=None,
             airlines=["Virgin Atlantic"],
             owner_airline="VS",
-            booking_url=_build_booking_url(req.origin, req.destination),
+            booking_url=_build_booking_url(req.origin, req.destination, req.date_from, req.return_from),
             is_locked=False,
             source="virginatlantic_direct",
             source_tier="free",
@@ -534,6 +556,10 @@ class VirginAtlanticConnectorClient:
         if not dep_date_str:
             return None
 
+        # Filter: only accept fares matching the exact requested date
+        if dep_date_str != target_date:
+            return None
+
         currency = fare.get("currencyCode") or "GBP"
         origin_code = fare.get("originAirportCode") or req.origin
         dest_code = fare.get("destinationAirportCode") or req.destination
@@ -574,7 +600,7 @@ class VirginAtlanticConnectorClient:
             inbound=None,
             airlines=["Virgin Atlantic"],
             owner_airline="VS",
-            booking_url=_build_booking_url(req.origin, req.destination),
+            booking_url=_build_booking_url(req.origin, req.destination, req.date_from, req.return_from),
             is_locked=False,
             source="virginatlantic_direct",
             source_tier="free",

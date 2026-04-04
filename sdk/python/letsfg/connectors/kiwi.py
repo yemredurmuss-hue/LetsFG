@@ -470,6 +470,15 @@ class KiwiConnectorClient:
                 ret_date = ret_first.departure.strftime("%Y-%m-%d") if ret_first.departure.year > 2000 else ""
                 if ret_date:
                     search_deeplink += f"/{ret_date}"
+            else:
+                # One-way search — append no-return so Kiwi doesn't default to return
+                search_deeplink += "/no-return"
+
+            # Add query params: direct filter if applicable, sort by price
+            params = ["sortBy=price"]
+            if outbound.stopovers == 0:
+                params.append("stopNumber=0")
+            search_deeplink += "?" + "&".join(params)
 
             # Always use stable search deeplink — token URLs expire in minutes
             # and are useless by the time the user clicks
