@@ -212,7 +212,9 @@ class EmiratesConnectorClient:
         pass
 
     async def search_flights(self, req: FlightSearchRequest) -> FlightSearchResponse:
-        ob_result = await self._search_ow(req)
+        # Always pass return_from: None to _search_ow (it does one-way searches only)
+        ob_req = req.model_copy(update={"return_from": None}) if req.return_from else req
+        ob_result = await self._search_ow(ob_req)
         if req.return_from and ob_result.total_results > 0:
             ib_req = req.model_copy(update={"origin": req.destination, "destination": req.origin, "date_from": req.return_from, "return_from": None})
             ib_result = await self._search_ow(ib_req)
@@ -341,27 +343,6 @@ class EmiratesConnectorClient:
             for f in flights:
                 offer = self._build_offer(f, req)
                 if offer:
-                    # For RT: build inbound placeholder, scraped prices are RT total
-                    if req.return_from:
-                        try:
-                            rdt = req.return_from if isinstance(req.return_from, (datetime, date)) else datetime.strptime(str(req.return_from), "%Y-%m-%d")
-                            if not isinstance(rdt, datetime):
-                                rdt = datetime(rdt.year, rdt.month, rdt.day)
-                        except (ValueError, TypeError):
-                            rdt = offer.outbound.segments[0].departure
-                        ib_seg = FlightSegment(
-                            airline="EK",
-                            airline_name="Emirates",
-                            flight_no="EK",
-                            origin=req.destination,
-                            destination=req.origin,
-                            departure=rdt,
-                            arrival=rdt,
-                            duration_seconds=0,
-                            cabin_class="economy",
-                        )
-                        offer.inbound = FlightRoute(segments=[ib_seg], total_duration_seconds=0, stopovers=0)
-                        offer.id = offer.id.replace("ek_", "ek_rt_")
                     offers.append(offer)
 
             offers.sort(key=lambda o: o.price)
@@ -780,8 +761,8 @@ class EmiratesConnectorClient:
                     // Skip intermediate blank/whitespace-only (already filtered out)
                     let next = k + 1;
                     // Skip "Lowest price" etc between currency and amount
-                    while (next < rawLines.length && !/[\d,]+/.test(rawLines[next]) && next < k + 4) next++;
-                    if (next < rawLines.length && /^[\d,]+$/.test(rawLines[next])) {
+                    while (next < rawLines.length && !/[\d,.]+/.test(rawLines[next]) && next < k + 4) next++;
+                    if (next < rawLines.length && /^[\d,.]+$/.test(rawLines[next])) {
                         lines.push(rawLines[k] + ' ' + rawLines[next]);
                         k = next; // skip the number line
                         continue;
@@ -847,7 +828,7 @@ class EmiratesConnectorClient:
                     const cabinLine = lines[j] || '';
                     j++;
 
-                    // Price line: "from" or "AED X,XXX"
+                    // Price line: "from" or "AED X,XXX.XX"
                     let priceLine = '';
                     while (j < lines.length && j < i + 25) {
                         if (/AED|USD|EUR|GBP/i.test(lines[j])) {
@@ -856,7 +837,7 @@ class EmiratesConnectorClient:
                         }
                         j++;
                     }
-                    const priceMatch = priceLine.match(/(AED|USD|EUR|GBP)\s*([\d,]+)/i);
+                    const priceMatch = priceLine.match(/(AED|USD|EUR|GBP)\s*([\d,.]+)/i);
 
                     // Flight number — look for EK###
                     let flightNo = '';

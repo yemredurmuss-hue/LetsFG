@@ -655,27 +655,6 @@ class EmiratesConnectorClient:
             for f in flights:
                 offer = self._build_offer(f, req)
                 if offer:
-                    # For RT: build inbound placeholder, scraped prices are RT total
-                    if req.return_from:
-                        try:
-                            rdt = req.return_from if isinstance(req.return_from, (datetime, date)) else datetime.strptime(str(req.return_from), "%Y-%m-%d")
-                            if not isinstance(rdt, datetime):
-                                rdt = datetime(rdt.year, rdt.month, rdt.day)
-                        except (ValueError, TypeError):
-                            rdt = offer.outbound.segments[0].departure
-                        ib_seg = FlightSegment(
-                            airline="EK",
-                            airline_name="Emirates",
-                            flight_no="EK",
-                            origin=req.destination,
-                            destination=req.origin,
-                            departure=rdt,
-                            arrival=rdt,
-                            duration_seconds=0,
-                            cabin_class="economy",
-                        )
-                        offer.inbound = FlightRoute(segments=[ib_seg], total_duration_seconds=0, stopovers=0)
-                        offer.id = offer.id.replace("ek_", "ek_rt_")
                     offers.append(offer)
 
             offers.sort(key=lambda o: o.price)
