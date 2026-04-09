@@ -944,6 +944,11 @@ def _filter_route_mismatch(
                     if ib_origin not in valid_destinations or ib_dest not in valid_origins:
                         dropped += 1
                         continue
+                else:
+                    # Segments present but origin/dest empty — data quality issue, drop
+                    logger.warning("Route filter: dropping offer with empty inbound segment airports")
+                    dropped += 1
+                    continue
 
         filtered.append(offer)
 
