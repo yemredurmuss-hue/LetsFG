@@ -38,6 +38,10 @@ async def search(
                 "adults": adults,
                 "cabin_class": cabin,
             },
-            headers={"X-API-Key": LETSFG_API_KEY}
+            headers={"X-API-Key": LETSFG_API_KEY}  # ← Düzeltildi!
         )
     return r.json()
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
